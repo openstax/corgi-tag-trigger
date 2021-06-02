@@ -8,6 +8,8 @@ export = (app: Probot) => {
   app.on("create", async (context) => {
     // NOTE: if we miss webhooks look into persistence
 
+    // app.log.info(context);
+
     // Do we need to filter events?
     if (context.payload.ref_type !== 'tag') {
       app.log.error(`ref_type '${context.payload.ref_type}' is not tag`);
@@ -65,8 +67,8 @@ export = (app: Probot) => {
           collection_id: `${repo}/${slug}`,
           job_type_id: jobType,
           status_id: 1,
-          version: `${context.payload.ref}`
-          // style: ???
+          version: `${context.payload.ref}`,
+          style: 'business-ethics'
         }
 
         request.write(JSON.stringify(data))
