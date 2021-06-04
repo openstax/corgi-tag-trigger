@@ -55,7 +55,7 @@ $ heroku config:set APP_ID=aaa \
 ```
 git push:
 
-$ git push heroku master
+$ git push heroku main
 ...
 -----> Node.js app detected
 ...
@@ -71,6 +71,16 @@ $ git push heroku master
 
 ## Note
 Make sure to add new osbook-* repos to the github app otherwise they will be ignored.
+
+1. Open [corgi-tag-trigger](https://github.com/organizations/openstax/settings/apps/corgi-tag-trigger) on Github
+2. Click `Install App` from sidebar
+3. Click the gear icon next to installed
+4. Click `Select repositories` under `Repository access`
+5. Enter osbooks in the search box
+6. Click request on the target book repo
+7. Repeat 4-6 until all new book repos have been selected
+8. Select update access
+9. Request admin approval
 
 ## Contributing
 
