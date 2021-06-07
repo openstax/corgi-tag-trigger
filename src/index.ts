@@ -66,7 +66,7 @@ export = (app: Probot) => {
           job_type_id: jobType,
           status_id: 1,
           version: `${context.payload.ref}`,
-          style: 'business-ethics'
+          style: 'business-ethics' // TODO: add style to META-INF
         }
 
         request.write(JSON.stringify(data))

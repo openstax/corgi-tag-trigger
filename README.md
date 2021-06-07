@@ -87,7 +87,3 @@ Make sure to add new osbook-* repos to the github app otherwise they will be ign
 If you have suggestions for how git-tag-corgi-trigger could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
 
 For more, check out the [Contributing Guide](CONTRIBUTING.md).
-
-## License
-
-[ISC](LICENSE) © 2021 Christopher Kline <ckline.tryptic@gmail.com>
