@@ -50,7 +50,7 @@ export = (app: Probot) => {
         const request = https.request(CORGI_URL, options)
 
         request.on('data', (d) => {
-          app.log.info(d)
+          app.log.info(`status_id: ${d.status_id}`)
         })
 
         request.on('response', (r) => {
@@ -69,10 +69,14 @@ export = (app: Probot) => {
           style: 'business-ethics' // TODO: add style to META-INF
         }
 
-        request.write(JSON.stringify(data))
+        const data_string = JSON.stringify(data)
+
+        app.log.info(data_string)
+        request.write(data_string)
 
         request.end()
       })
+
     })
   })
 }
