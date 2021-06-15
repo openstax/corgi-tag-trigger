@@ -1,8 +1,9 @@
 import { Probot } from "probot"
-import * as https from "https"
+import fetch from "node-fetch"
 import * as sax from "sax"
 
 const CORGI_URL = `https://${process.env.CORGI_URL}.openstax.org/api/jobs/`
+const SLACK_URL = 'https://hooks.slack.com/services/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'
 
 export = (app: Probot) => {
   app.on("create", async (context) => {
@@ -35,48 +36,52 @@ export = (app: Probot) => {
 
     // send job details to CORGI API
     // make request per book + job type
-    books.forEach(slug => {
-      [3, 4].forEach(jobType => {
-        // 3: git-pdf
-        // 4: git-distribution-preview
+    let jobStatus = 'failed to queue'
 
-        app.log.info(`collection_id: ${repo}/${slug}`)
-        app.log.info(`job_type_id: ${jobType}`)
+    try {
+      for (const slug of books) {
+        for (const jobType of [3, 4]) {
+          // 3: git-pdf
+          // 4: git-distribution-preview
 
-        const options = {
-          method: 'POST',
+          app.log.info(`collection_id: ${repo}/${slug}`)
+          app.log.info(`job_type_id: ${jobType}`)
+
+          const payload = {
+            collection_id: `${repo}/${slug}`,
+            job_type_id: jobType,
+            status_id: 1,
+            version: `${context.payload.ref}`,
+            style: 'business-ethics' // TODO: add style to META-INF
+          }
+
+          const response = await fetch(CORGI_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          })
+
+          app.log.info(response.status.toString())
+          if (response.status != 200) { throw new Error("waaaaah!") }
         }
+      }
+      //slack happy
+      jobStatus = 'successfully queued'
+    } catch { }
 
-        const request = https.request(CORGI_URL, options)
+    let bookList = ''
+    books.forEach((book) => {
+      bookList += `\n - ${book}`
+    })
 
-        request.on('data', (d) => {
-          app.log.info(`status_id: ${d.status_id}`)
-        })
+    await fetch(SLACK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
 
-        request.on('response', (r) => {
-          app.log.info(`${r.statusCode}`)
-        })
-
-        request.on('error', (e) => {
-          app.log.info(e)
-        })
-
-        const data = {
-          collection_id: `${repo}/${slug}`,
-          job_type_id: jobType,
-          status_id: 1,
-          version: `${context.payload.ref}`,
-          style: 'business-ethics' // TODO: add style to META-INF
-        }
-
-        const data_string = JSON.stringify(data)
-
-        app.log.info(data_string)
-        request.write(data_string)
-
-        request.end()
+      body: JSON.stringify({
+        'text':
+          `CORGI job(s) ${jobStatus} for ${bookList}`
       })
-
     })
   })
 }
