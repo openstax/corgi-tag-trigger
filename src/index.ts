@@ -9,6 +9,8 @@ export = (app: Probot) => {
   app.on("create", async (context) => {
     // NOTE: if we miss webhooks look into persistence
 
+    app.log.info("recieved webhook.")
+
     // Do we need to filter events?
     if (context.payload.ref_type !== 'tag') { return }
 
