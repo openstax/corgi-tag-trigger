@@ -3,14 +3,11 @@ import fetch from "node-fetch"
 import * as sax from "sax"
 
 const CORGI_URL = `https://${process.env.CORGI_URL}.openstax.org/api/jobs/`
-const SLACK_URL = 'https://hooks.slack.com/services/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'
+const SLACK_URL = `https://hooks.slack.com/services/${process.env.SLACK_SECRET}`
 
 export = (app: Probot) => {
   app.on("create", async (context) => {
     // NOTE: if we miss webhooks look into persistence
-
-    // app.log.info(context)
-
 
     // Do we need to filter events?
     if (context.payload.ref_type !== 'tag') { return }
@@ -65,7 +62,7 @@ export = (app: Probot) => {
           if (response.status != 200) { throw new Error("waaaaah!") }
         }
       }
-      //slack happy
+
       jobStatus = 'successfully queued'
     } catch { }
 
